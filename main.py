@@ -82,5 +82,5 @@ if __name__ == '__main__':
                         shutil.copy2(filepath, dest_path)
                         count += 1
 
-                        print("\r%3.2f%%" % (count / len(filepaths)), end="")
+                        print("\r%3.2f%%" % (100 * count / len(filepaths)), end="")
     print("Finished (copied %d files in total)." % count)
