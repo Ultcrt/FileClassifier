@@ -35,6 +35,8 @@ if __name__ == '__main__':
         double_check = input("")
 
     output_directory = "./output/"
+    error_directory = os.path.join(output_directory, "error")
+    log_path = os.path.join(output_directory, "log.txt")
 
     count = 0
     if double_check == "Y":
@@ -45,36 +47,41 @@ if __name__ == '__main__':
                 # Ignore .ini files
                 if not filepath.endswith(".ini"):
                     with open(filepath, "rb") as f:
-                        exif_info = exifread.process_file(f, stop_tag="EXIF DateTimeOriginal")
-                        # Has exif
-                        if exif_info.get("EXIF DateTimeOriginal", None) is not None:
-                            taken_time_string = str(exif_info["EXIF DateTimeOriginal"])
-                            taken_time_struct = time.strptime(taken_time_string, "%Y:%m:%d %H:%M:%S")
-                        # Doesn't have exif
-                        else:
-                            create_timestamp = os.path.getctime(filepath)
-                            modified_timestamp = os.path.getmtime(filepath)
-                            taken_timestamp = min(modified_timestamp, create_timestamp)
-                            taken_time_struct = time.localtime(taken_timestamp)
+                        try:
+                            exif_info = exifread.process_file(f, stop_tag="EXIF DateTimeOriginal")
+                            # Has exif
+                            if exif_info.get("EXIF DateTimeOriginal", None) is not None:
+                                taken_time_string = str(exif_info["EXIF DateTimeOriginal"])
+                                taken_time_struct = time.strptime(taken_time_string, "%Y:%m:%d %H:%M:%S")
+                            # Doesn't have exif
+                            else:
+                                create_timestamp = os.path.getctime(filepath)
+                                modified_timestamp = os.path.getmtime(filepath)
+                                taken_timestamp = min(modified_timestamp, create_timestamp)
+                                taken_time_struct = time.localtime(taken_timestamp)
 
-                        if classify_precision == "Y":
-                            dest_path = os.path.join(
-                                output_directory,
-                                str(taken_time_struct.tm_year)
-                            )
-                        elif classify_precision == "M":
-                            dest_path = os.path.join(
-                                output_directory,
-                                str(taken_time_struct.tm_year),
-                                str(taken_time_struct.tm_mon).zfill(2)
-                            )
-                        elif classify_precision == "D":
-                            dest_path = os.path.join(
-                                output_directory,
-                                str(taken_time_struct.tm_year),
-                                str(taken_time_struct.tm_mon).zfill(2),
-                                str(taken_time_struct.tm_mday).zfill(2)
-                            )
+                            if classify_precision == "Y":
+                                dest_path = os.path.join(
+                                    output_directory,
+                                    str(taken_time_struct.tm_year)
+                                )
+                            elif classify_precision == "M":
+                                dest_path = os.path.join(
+                                    output_directory,
+                                    str(taken_time_struct.tm_year),
+                                    str(taken_time_struct.tm_mon).zfill(2)
+                                )
+                            elif classify_precision == "D":
+                                dest_path = os.path.join(
+                                    output_directory,
+                                    str(taken_time_struct.tm_year),
+                                    str(taken_time_struct.tm_mon).zfill(2),
+                                    str(taken_time_struct.tm_mday).zfill(2)
+                                )
+                        except Exception as e:
+                            dest_path = os.path.join(output_directory, "error")
+                            with open(log_path, "a") as log:
+                                log.write(filepath + " -> " + str(e))
 
                         if not os.path.exists(dest_path):
                             os.makedirs(dest_path, exist_ok=True)
