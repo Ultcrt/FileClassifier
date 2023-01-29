@@ -26,7 +26,9 @@ if __name__ == '__main__':
     else:
         filepaths = os.listdir(input_directory)
 
-    print(filepaths, "\nDirectory contains %s files above, are you sure to process? (Y/N)" % len(filepaths))
+    for filepath in filepaths:
+        print(filepath)
+    print("Directory contains %s files above, are you sure to process? (Y/N)" % len(filepaths))
     double_check = input("")
     while double_check != "Y" and double_check != "N":
         print("Invalid input, Y for yes and N for no: ")
@@ -79,4 +81,6 @@ if __name__ == '__main__':
 
                         shutil.copy2(filepath, dest_path)
                         count += 1
-    print("Finished (moved %d files in total)." % count)
+
+                        print("\r%3.2f%%" % (count / len(filepaths)), end="")
+    print("Finished (copied %d files in total)." % count)
