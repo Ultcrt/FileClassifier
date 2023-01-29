@@ -24,7 +24,9 @@ if __name__ == '__main__':
             for filename in filenames:
                 filepaths.append(os.path.join(path, filename))
     else:
-        filepaths = os.listdir(input_directory)
+        filepaths = []
+        for filename in os.listdir(input_directory):
+            filepaths.append(os.path.join(input_directory, filename))
 
     for filepath in filepaths:
         print(filepath)
@@ -48,7 +50,7 @@ if __name__ == '__main__':
                 if not filepath.endswith(".ini"):
                     with open(filepath, "rb") as f:
                         try:
-                            exif_info = exifread.process_file(f, stop_tag="EXIF DateTimeOriginal")
+                            exif_info = exifread.process_file(f, stop_tag="EXIF DateTimeOriginal", details=False)
                             # Has exif
                             if exif_info.get("EXIF DateTimeOriginal", None) is not None:
                                 taken_time_string = str(exif_info["EXIF DateTimeOriginal"])
