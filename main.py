@@ -5,17 +5,13 @@ import exifread
 import os
 
 if __name__ == '__main__':
-    print("Do you want to classify files recursively? (Y/N)")
-    recursive_flag = input("")
+    recursive_flag = input("Do you want to classify files recursively? (Y/N)")
     while recursive_flag != "Y" and recursive_flag != "N":
-        print("Invalid input, Y for yes and N for no: ")
-        recursive_flag = input("")
+        recursive_flag = input("Invalid input, Y for yes and N for no: ")
 
-    print("Do you want to classify files by day, month or year? (Y/M/D)")
-    classify_precision = input("")
+    classify_precision = input("Do you want to classify files by day, month or year? (Y/M/D)")
     while classify_precision != "Y" and classify_precision != "M" and classify_precision != "D":
-        print("Invalid input, Y for year, M for month and D for day: ")
-        classify_precision = input("")
+        classify_precision = input("Invalid input, Y for year, M for month and D for day: ")
 
     input_directory = input("Please input directory: ")
     if recursive_flag == "Y":
@@ -30,11 +26,9 @@ if __name__ == '__main__':
 
     for filepath in filepaths:
         print(filepath)
-    print("Directory contains %s files above, are you sure to process? (Y/N)" % len(filepaths))
-    double_check = input("")
+    double_check = input("Directory contains %s files above, are you sure to process? (Y/N)" % len(filepaths))
     while double_check != "Y" and double_check != "N":
-        print("Invalid input, Y for yes and N for no: ")
-        double_check = input("")
+        double_check = input("Invalid input, Y for yes and N for no: ")
 
     output_directory = "./output/"
     error_directory = os.path.join(output_directory, "error")
@@ -83,7 +77,7 @@ if __name__ == '__main__':
                         except Exception as e:
                             dest_path = os.path.join(output_directory, "error")
                             with open(log_path, "a") as log:
-                                log.write(filepath + " -> " + str(e))
+                                log.write(filepath + " -> " + str(e) + "\n")
 
                         if not os.path.exists(dest_path):
                             os.makedirs(dest_path, exist_ok=True)
@@ -91,5 +85,6 @@ if __name__ == '__main__':
                         shutil.copy2(filepath, dest_path)
                         count += 1
 
-                        print("\r%3.2f%%" % (100 * count / len(filepaths)), end="")
-    print("Finished (copied %d files in total)." % count)
+                        print("\r%.2f%%" % (100 * count / len(filepaths)), end="")
+    print("\nFinished (copied %d files in total)." % count)
+    input("Press any key to exit...")
